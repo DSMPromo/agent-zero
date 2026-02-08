@@ -12,7 +12,7 @@ class Reset(ApiHandler):
         context = self.use_context(ctxid)
         context.reset()
         persist_chat.save_tmp_chat(context)
-        persist_chat.remove_msg_files(ctxid)
+        persist_chat.remove_msg_files(context.id)
 
         return {
             "message": "Agent restarted.",
