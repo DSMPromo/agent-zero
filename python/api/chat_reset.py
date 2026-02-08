@@ -6,7 +6,7 @@ from python.helpers import persist_chat
 
 class Reset(ApiHandler):
     async def process(self, input: Input, request: Request) -> Output:
-        ctxid = input.get("context", "")
+        ctxid = input.get("context") or ""
 
         # context instance - get or create
         context = self.use_context(ctxid)
