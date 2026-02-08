@@ -208,6 +208,12 @@ const settingsModalProxy = {
                 window.toastFetchError("Error saving settings", e)
                 return
             }
+            // Show API key validation warnings (Ticket #1309)
+            if (resp.warnings && resp.warnings.length > 0) {
+                for (const warning of resp.warnings) {
+                    showToast(warning, 'warning');
+                }
+            }
             document.dispatchEvent(new CustomEvent('settings-updated', { detail: resp.settings }));
             this.resolvePromise({
                 status: 'saved',
