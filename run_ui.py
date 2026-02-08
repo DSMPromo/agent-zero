@@ -34,10 +34,15 @@ if hasattr(time, 'tzset'):
 # initialize the internal Flask server
 webapp = Flask("app", static_folder=get_abs_path("./webui"), static_url_path="/")
 webapp.secret_key = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32)
+
+# Allow iframe embedding with ALLOW_IFRAME=true env var
+allow_iframe = os.getenv("ALLOW_IFRAME", "false").lower() == "true"
+cookie_samesite = "Lax" if allow_iframe else "Strict"
+
 webapp.config.update(
     JSON_SORT_KEYS=False,
     SESSION_COOKIE_NAME="session_" + runtime.get_runtime_id(),  # bind the session cookie name to runtime id to prevent session collision on same host
-    SESSION_COOKIE_SAMESITE="Strict",
+    SESSION_COOKIE_SAMESITE=cookie_samesite,
     SESSION_PERMANENT=True,
     PERMANENT_SESSION_LIFETIME=timedelta(days=1)
 )
@@ -46,6 +51,16 @@ lock = threading.Lock()
 
 # Set up basic authentication for UI and API but not MCP
 # basic_auth = BasicAuth(webapp)
+
+# Add headers to allow iframe embedding when ALLOW_IFRAME=true
+@webapp.after_request
+def add_iframe_headers(response):
+    if allow_iframe:
+        # Remove any existing X-Frame-Options that might block embedding
+        response.headers.pop('X-Frame-Options', None)
+        # Set permissive Content-Security-Policy for iframe embedding
+        response.headers['Content-Security-Policy'] = "frame-ancestors *"
+    return response
 
 
 def is_loopback_address(address):
@@ -136,6 +151,10 @@ def requires_auth(f):
 def csrf_protect(f):
     @wraps(f)
     async def decorated(*args, **kwargs):
+        # Skip CSRF check if iframe mode is enabled
+        if os.getenv("ALLOW_IFRAME", "false").lower() == "true":
+            return await f(*args, **kwargs)
+
         token = session.get("csrf_token")
         header = request.headers.get("X-CSRF-Token")
         cookie = request.cookies.get("csrf_token_" + runtime.get_runtime_id())
@@ -176,8 +195,8 @@ async def serve_index():
         gitinfo = git.get_git_info()
     except Exception:
         gitinfo = {
-            "version": "unknown",
-            "commit_time": "unknown",
+            "version": "v7.0.0",
+            "commit_time": "LTSSSS Integration",
         }
     index = files.read_file("webui/index.html")
     index = files.replace_placeholders_text(

@@ -10,13 +10,13 @@
     <div x-data x-show="$store.welcomeStore && $store.welcomeStore.isVisible">
         <template x-if="$store.welcomeStore">
             <div x-data="$store.welcomeStore" class="welcome-container">
-                <!-- Agent Zero Logo -->
+                <!-- Agent OS Logo -->
                 <div class="welcome-logo-container">
-                    <img src="./public/darkSymbol.svg" alt="Agent Zero Logo" class="welcome-logo" />
+                    <img src="./public/darkSymbol.svg" alt="Agent OS Logo" class="welcome-logo" />
                 </div>
 
                 <!-- Welcome Title -->
-                <h1 class="welcome-title">Welcome to Agent Zero</h1>
+                <h1 class="welcome-title">Welcome to Agent OS</h1>
                 <p class="welcome-subtitle">
                     Start a new conversation or explore the features below.
                 </p>
@@ -49,21 +49,7 @@
                         <span class="material-symbols-outlined welcome-action-icon">settings</span>
                         <h3 class="welcome-action-title">Settings</h3>
                         <p class="welcome-action-description">
-                            Configure Agent Zero
-                        </p>
-                    </div>
-                    <div class="welcome-action-card" @click="executeAction('website')">
-                        <span class="material-symbols-outlined welcome-action-icon">language</span>
-                        <h3 class="welcome-action-title">Visit Website</h3>
-                        <p class="welcome-action-description">
-                            Learn more about Agent Zero
-                        </p>
-                    </div>
-                    <div class="welcome-action-card" @click="executeAction('github')">
-                        <span class="material-symbols-outlined welcome-action-icon">code</span>
-                        <h3 class="welcome-action-title">Visit GitHub</h3>
-                        <p class="welcome-action-description">
-                            View source code and documentation
+                            Configure Agent OS
                         </p>
                     </div>
                 </div>
@@ -127,9 +113,9 @@
 
         .welcome-actions {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.2rem;
-            max-width: 520px;
+            max-width: 400px;
             width: 100%;
             margin: 1.5rem 0;
         }

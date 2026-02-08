@@ -1,5 +1,6 @@
 from abc import abstractmethod
 import json
+import os
 import threading
 from typing import Union, TypedDict, Dict, Any
 from attr import dataclass
@@ -29,6 +30,9 @@ class ApiHandler:
 
     @classmethod
     def requires_auth(cls) -> bool:
+        # Skip auth when iframe embedding is enabled
+        if os.getenv("ALLOW_IFRAME", "false").lower() == "true":
+            return False
         return True
 
     @classmethod
